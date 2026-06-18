@@ -1,0 +1,20 @@
+# Build output
+/dist/
+/build-temp/
+
+# Windows specific
+Thumbs.db
+Desktop.ini
+
+# PowerShell
+*.ps1xml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+*.swp
+*.swo
+.claude

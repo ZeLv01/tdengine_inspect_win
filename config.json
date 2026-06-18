@@ -1,0 +1,39 @@
+{
+    "connection": {
+        "method": "websocket",
+        "server": "localhost",
+        "port": 6041,
+        "user": "root",
+        "password": "taosdata",
+        "useSSL": false,
+        "timeout": 30
+    },
+    "fallback": {
+        "enabled": true,
+        "method": "native",
+        "port": 6030
+    },
+    "thresholds": {
+        "diskUsageWarning": 85,
+        "diskUsageCritical": 95,
+        "cpuUsageWarning": 80,
+        "cpuDurationMinutes": 30,
+        "licenseExpiryDays": 90,
+        "licenseUsagePercent": 80,
+        "slowQueryLookbackDays": 30,
+        "slowQueryThresholdMs": 10000
+    },
+    "cluster": {
+        "nodes": [],
+        "replica": 3
+    },
+    "paths": {
+        "tdengine": "C:\\TDengine",
+        "log": "C:\\TDengine\\log",
+        "data": "C:\\TDengine\\data"
+    },
+    "report": {
+        "outputDir": "output",
+        "language": "en"
+    }
+}
