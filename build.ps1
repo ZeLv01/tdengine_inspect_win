@@ -103,6 +103,9 @@ $sw.WriteLine('function Get-Config { param($Path) if([string]::IsNullOrEmpty($Pa
 $sw.WriteLine('function Import-Modules { param($p) }')
 $sw.WriteLine('')
 
+# Helper: ConvertTo-HtmlTable (used by New-HTMLReport)
+$sw.WriteLine('function ConvertTo-HtmlTable { param($Headers,$Rows) $h="<table class=`"data-table`">`n<thead><tr>";foreach($x in $Headers){$h+="<th>$([System.Web.HttpUtility]::HtmlEncode($x))</th>"};$h+="</tr></thead>`n<tbody>";foreach($r in $Rows){$h+="<tr>";foreach($c in $r){$h+="<td>$([System.Web.HttpUtility]::HtmlEncode($c))</td>"};$h+="</tr>`n"};$h+="</tbody></table>`n";return $h }')
+
 # Override New-HTMLReport (use embedded template)
 $sw.WriteLine('function New-HTMLReport {')
 $sw.WriteLine('  param($Results,$Config,$tp,$OutputPath,$StartTime,$EndTime)')
@@ -127,6 +130,7 @@ $sw.WriteLine('    if ($r.Status -eq "Critical" -and $r.Issues.Count) { $failSum
 $sw.WriteLine('    $sectionsHtml += "<div class=`"section`" id=`"$aid`"><div class=`"section-header`"><h2>$si. $($r.Name)</h2><span class=`"badge $sc`">$($r.Status)</span></div><div class=`"sc`">"')
 $sw.WriteLine('    if ($r.Issues.Count) { $ic = if($sc -eq "fail"){"fail"}else{"warning"}; $sectionsHtml += "<div class=`"issues $ic`"><strong>Issues:</strong><ul>"; foreach ($x in $r.Issues) { $sectionsHtml += "<li>$x</li>" }; $sectionsHtml += "</ul></div>" }')
 $sw.WriteLine('    if ($r.Details.Count) { $sectionsHtml += "<div class=`"details`">$([System.Web.HttpUtility]::HtmlEncode(($r.Details -join "`n")))</div>" }')
+$sw.WriteLine('    if ($r.Tables.Count) { foreach ($t in $r.Tables) { if ($t.Caption) { $sectionsHtml += "<h4 style=`"margin:10px 0 5px;color:#495057`">$($t.Caption)</h4>" } if ($t.Headers -and $t.Rows.Count) { $sectionsHtml += ConvertTo-HtmlTable -Headers $t.Headers -Rows $t.Rows } } }')
 $sw.WriteLine('    $sectionsHtml += "</div></div>"')
 $sw.WriteLine('  }')
 $sw.WriteLine('  $alertHtml = ""')
@@ -164,7 +168,7 @@ $sw.WriteLine('  if(-not (Test-Path $ConfigPath)){ Write-Error "Config not found
 $sw.WriteLine('  try { $Config = Get-Config -Path $ConfigPath; Write-Host "  Server: $($Config.connection.server) ($($Config.connection.method):$($Config.connection.port))" -ForegroundColor Gray } catch { Write-Error "Config: $_"; exit 1 }')
 $sw.WriteLine('  try { if (Test-TDengineConnection -Config $Config) { Write-Host "  Connection: OK" -ForegroundColor Green } else { Write-Warning "Connection: failed" } } catch { Write-Warning "Connection: $_" }')
 $sw.WriteLine('  $Results = @()')
-$sw.WriteLine('  $funcs = @("Get-SystemInfo","Get-CPUInfo","Get-MemoryInfo","Get-NetworkInfo","Get-DataDirectoryInfo","Get-HostsConfigInfo","Get-DnodeInfo","Get-MnodeInfo","Get-DatabaseList","Get-DatabaseCreateStatements","Get-StableCreateStatements","Get-StableStatistics","Get-StableDiskDistribution","Get-DiskUsageInfo","Get-CPUUsageInfo","Get-FirewallStatus","Get-ServiceVersionInfo","Get-ServiceStatus","Get-ErrorLogInfo","Get-UserInfo","Get-LicenseInfo","Get-SlowQueryInfo","Get-ReplicaInfo","Get-DatabaseVariables","Get-VnodeLeaderInfo","Get-MeasurePoints")')
+$sw.WriteLine('  $funcs = @("Get-SystemInfo","Get-CPUInfo","Get-MemoryInfo","Get-NetworkInfo","Get-DataDirectoryInfo","Get-HostsConfigInfo","Get-DnodeInfo","Get-MnodeInfo","Get-DatabaseList","Get-DatabaseCreateStatements","Get-StableCreateStatements","Get-StableStatistics","Get-StableDiskDistribution","Get-DiskUsageInfo","Get-CPUUsageInfo","Get-FirewallStatus","Get-ServiceVersionInfo","Get-ServiceStatus","Get-ErrorLogInfo","Get-UserInfo","Get-LicenseInfo","Get-SlowQueryInfo","Get-ReplicaInfo","Get-DatabaseVariables","Get-VnodeLeaderInfo","Get-MeasurePoints","Get-CrashDetectionInfo","Get-ConfigFilesInfo","Get-TaosxInfo")')
 $sw.WriteLine('  $ci = 0')
 $sw.WriteLine('  foreach ($f in $funcs) { $ci++; try { $r = & $f -Config $Config; $Results += $r; $sc = switch($r.Status){"Pass"{"Green"};"Warning"{"Yellow"};"Critical"{"Red"}}; if (-not $Quiet) { Write-Host "  $ci. [$($r.Status)] $($r.Name)" -ForegroundColor $sc } } catch { Write-Warning "  $ci. [FAIL] ${f}: $_" } }')
 $sw.WriteLine('  Write-Host ""')

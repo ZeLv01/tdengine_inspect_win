@@ -151,7 +151,19 @@ function New-HTMLReport {
             $detailsHtml = [System.Web.HttpUtility]::HtmlEncode($detailsText)
             $sectionsHtml += "<div class=`"details`">$detailsHtml</div>"
         }
-        
+
+        # Tables (structured table data)
+        if ($result.Tables -and $result.Tables.Count -gt 0) {
+            foreach ($table in $result.Tables) {
+                if ($table.Caption) {
+                    $sectionsHtml += "<h4 style='margin:10px 0 5px;color:#495057'>$($table.Caption)</h4>"
+                }
+                if ($table.Headers -and $table.Rows -and $table.Rows.Count -gt 0) {
+                    $sectionsHtml += ConvertTo-HtmlTable -Headers $table.Headers -Rows $table.Rows
+                }
+            }
+        }
+
             $sectionsHtml += "</div></div>"
     }
     
@@ -324,7 +336,10 @@ function Main {
         @{Name="Get-ReplicaInfo"; Label="Replica Count"},
         @{Name="Get-DatabaseVariables"; Label="Database Variables"},
         @{Name="Get-VnodeLeaderInfo"; Label="Vnodes Leader Distribution"},
-        @{Name="Get-MeasurePoints"; Label="Database Measure Points"}
+        @{Name="Get-MeasurePoints"; Label="Database Measure Points"},
+        @{Name="Get-CrashDetectionInfo"; Label="Crash Detection"},
+        @{Name="Get-ConfigFilesInfo"; Label="Configuration Files"},
+        @{Name="Get-TaosxInfo"; Label="TaosX Status"}
     )
     
     $totalInspections = $inspections.Count

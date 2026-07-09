@@ -76,7 +76,10 @@ $functions = @(
     "Get-UserInfo",
     "Get-LicenseInfo",
     "Get-SlowQueryInfo",
-    "Get-ReplicaInfo"
+    "Get-ReplicaInfo",
+    "Get-CrashDetectionInfo",
+    "Get-ConfigFilesInfo",
+    "Get-TaosxInfo"
 )
 
 $available = 0

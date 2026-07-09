@@ -30,7 +30,8 @@
     "paths": {
         "tdengine": "C:\\TDengine",
         "log": "C:\\TDengine\\log",
-        "data": "C:\\TDengine\\data"
+        "data": "C:\\TDengine\\data",
+        "corefile": "C:\\TDengine"
     },
     "report": {
         "outputDir": "output",
